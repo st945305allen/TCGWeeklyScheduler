@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>翻轉x點子｜本週比賽行事曆</title>
+  <style>
+    body {
+      font-family: 'Orbitron', 'Segoe UI', 'Noto Sans TC', sans-serif;
+      background-color: #0d0f11;
+      background-image: 
+        linear-gradient(90deg, rgba(0,255,0,0.05) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(0,255,0,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      margin: 0;
+      padding: 20px;
+      color: #e0e0e0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #58a6ff;
+      font-size: 2em;
+      text-shadow: 0 0 8px #1f6feb;
+    }
+    #week-range, #today-date {
+      text-align: center;
+      font-size: 1.4em;
+      margin: 0;
+      color: #8b949e;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .day {
+      background: linear-gradient(135deg, #ffdd57, #ffaa00);
+      color: #0d0f11;
+      text-align: center;
+      font-weight: bold;
+      padding: 16px 12px;
+      font-size: 1.4em;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+      letter-spacing: 1px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .day-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .day-content {
+      flex: 1;
+      display: grid;
+      gap: 12px;
+    }
+    .event-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      margin-top: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #161b22;
+      box-shadow: 0 0 6px rgba(88,166,255,0.2);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .event-time {
+      font-size: 2em;
+      color: #c9d1d9;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .event-icon {
+      width: 100%;
+      max-height: 80px;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .event-name {
+      font-size: 1.4em;
+      border-radius: 8px;
+      text-align: center;
+      margin: 8px;
+      background: linear-gradient(to right, #00ffcc, #0077ff);
+      font-weight: 700;
+      width: calc(100% - 16px);
+      color: #0d0f11;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Orbitron', sans-serif;
+    }
+    @media screen and (max-width: 768px) {
+      .grid {
+        display: block;
+      }
+      .day-column {
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>翻轉x點子｜本週比賽行事曆</h1>
+  <p id="week-range" style="text-align: center; font-size: 1.1em; margin-bottom: 4px;"></p>
+  <p id="today-date" style="text-align: center; font-size: 0.95em; color: #666; margin-bottom: 20px;"></p>
+  <div class="grid" id="schedule-grid"></div>
+  <script>
+    const schedule = {
+      "週四": [
+        { "time": "20:00", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" }
+      ],
+      "週五": [
+        { "time": "19:00", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "19:30", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "19:30", "name": "寶可夢卡牌日", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" }
+      ],
+      "週六": [
+        { "time": "14:00", "name": "U15", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "18:00", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "18:00", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" }
+      ],
+      "週日": [
+        { "time": "15:00", "name": "常規賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "15:00", "name": "UC賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "18:00", "name": "交流賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" },
+        { "time": "18:00", "name": "道館賽", "icon": "https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png" }
+      ]
+    };
+
+    const grid = document.getElementById('schedule-grid');
+    for (const [day, events] of Object.entries(schedule)) {
+      const column = document.createElement('div');
+      column.className = 'day-column';
+
+      const dayHeader = document.createElement('div');
+      dayHeader.className = 'day';
+      dayHeader.textContent = day;
+      column.appendChild(dayHeader);
+
+      const content = document.createElement('div');
+      content.className = 'day-content';
+      content.classList.add(`fill-${Math.min(events.length, 4)}`);
+
+      for (const event of events) {
+        const cell = document.createElement('div');
+        cell.className = 'event-cell';
+
+        const time = document.createElement('div');
+        time.className = 'event-time';
+        time.textContent = event.time;
+
+        const img = document.createElement('img');
+        img.className = 'event-icon';
+        img.src = event.icon;
+        img.alt = 'icon';
+
+        const name = document.createElement('div');
+        name.className = 'event-name';
+        name.textContent = event.name;
+
+        cell.appendChild(time);
+        cell.appendChild(img);
+        cell.appendChild(name);
+        content.appendChild(cell);
+      }
+
+      column.appendChild(content);
+      grid.appendChild(column);
+    }
+    // 動態產生本週區間（以週一為起始）
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 (Sun) - 6 (Sat)
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + mondayOffset);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+
+  const formatDate = (date) => `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  const weekRange = `（${formatDate(monday)} - ${formatDate(sunday)}）`;
+  document.getElementById('week-range').textContent = weekRange;
+  const todayStr = `今天是 ${formatDate(today)}`;
+  document.getElementById('today-date').textContent = todayStr;
+// 突顯當天星期標題
+  const weekMap = ['日', '一', '二', '三', '四', '五', '六'];
+  const todayHeader = [...document.querySelectorAll('.day')].find(d => d.textContent.includes(`週${weekMap[today.getDay()]}`));
+  if (todayHeader) todayHeader.style.background = 'linear-gradient(135deg, #ff3cac, #784ba0)';
+  todayHeader.style.color = '#ffffff';
+  todayHeader.style.boxShadow = '0 0 20px rgba(255, 0, 128, 0.6)';
+</script>
+</body>
+</html>
