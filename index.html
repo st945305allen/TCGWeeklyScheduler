@@ -103,26 +103,22 @@
       font-family: 'Orbitron', sans-serif;
     }
     @media screen and (max-width: 768px) {
-  body {
-    padding: 10px;
-    overflow-y: auto;
-  }
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .day-column {
-    margin-bottom: 16px;
-  }
-  .event-time {
-    font-size: 1.6em;
-  }
-  .event-name {
-    font-size: 1.2em;
-  }
-}
+      body {
+        padding: 10px;
+        overflow-y: auto;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
       .day-column {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
+      }
+      .event-time {
+        font-size: 1.6em;
+      }
+      .event-name {
+        font-size: 1.2em;
       }
     }
   </style>
@@ -133,34 +129,32 @@
   <p id="today-date"></p>
   <div class="grid" id="schedule-grid" style="width: 100%; height: 100%; display: grid; align-content: stretch;"></div>
   <script>
-        const schedule = {
+    const fallbackImg = 'https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png';
+
+    const schedule = {
       "週四": [
-        {
-          "time": "20:00",
-          "name": "交流賽",
-          "icon": "./images/pokemon_gym.png"
-        }
+        { "time": "20:00", "name": "交流賽", "icon": "./images/pokemon_gym.png" }
       ],
       "週五": [
         { "time": "19:00", "name": "交流賽" },
-        { "time": "19:30", "name": "交流賽","icon": "./images/koryukai_green.png" },
+        { "time": "19:30", "name": "交流賽", "icon": "./images/koryukai_green.png" },
         { "time": "19:30", "name": "寶可夢<br>卡牌日" }
       ],
       "週六": [
         { "time": "14:00", "name": "U15" },
-        { "time": "18:00", "name": "交流賽","icon": "./images/koryukai_green.png" },
+        { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
         { "time": "18:00", "name": "交流賽" }
       ],
       "週日": [
         { "time": "15:00", "name": "常規賽" },
         { "time": "15:00", "name": "UC賽" },
-        { "time": "18:00", "name": "交流賽","icon": "./images/koryukai_green.png" },
+        { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
         { "time": "19:00", "name": "道館賽" }
       ]
     };
 
-
     const grid = document.getElementById('schedule-grid');
+
     for (const [day, events] of Object.entries(schedule)) {
       const column = document.createElement('div');
       column.className = 'day-column';
@@ -172,146 +166,119 @@
 
       const content = document.createElement('div');
       content.className = 'day-content';
-      content.classList.add(`fill-${Math.min(events.length, 4)}`);
+
+      const createIcon = (src) => {
+        const img = document.createElement('img');
+        img.src = src || fallbackImg;
+        img.alt = '活動圖片';
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        img.style.maxHeight = '150px';
+        img.style.objectFit = 'contain';
+        img.onerror = () => img.src = fallbackImg;
+        return img;
+      };
 
       if (events.length === 4) {
-  for (let i = 0; i < 4; i += 2) {
-    const rowWrap = document.createElement('div');
-    rowWrap.style.display = 'flex';
-    rowWrap.style.justifyContent = 'space-between';
-    rowWrap.style.gap = '12px';
+        for (let i = 0; i < 4; i += 2) {
+          const rowWrap = document.createElement('div');
+          rowWrap.style.display = 'flex';
+          rowWrap.style.gap = '12px';
 
-    const rowEvents = events.slice(i, i + 2);
-    for (const event of rowEvents) {
-      const cell = document.createElement('div');
-      cell.className = 'event-cell';
-      cell.style.flex = '1';
+          for (const event of events.slice(i, i + 2)) {
+            const cell = document.createElement('div');
+            cell.className = 'event-cell';
+            cell.style.flex = '1';
 
-      const time = document.createElement('div');
-      time.className = 'event-time';
-      time.textContent = event.time;
+            const time = document.createElement('div');
+            time.className = 'event-time';
+            time.textContent = event.time;
 
-      const icon = document.createElement('img');
-    icon.src = event.icon || './images/pokemon_gym.png';
-    icon.alt = '活動圖片';
-    icon.style.width = '100%';
-icon.style.height = 'auto';
-icon.style.maxHeight = '150px';
-icon.style.aspectRatio = 'auto';
-    icon.style.objectFit = 'contain';
-    cell.appendChild(time);
-    cell.appendChild(time);
-    cell.appendChild(icon);
-    const eventName = document.createElement('div');
-    eventName.className = 'event-name';
-    eventName.innerHTML = event.name;
+            const icon = createIcon(event.icon);
+            const name = document.createElement('div');
+            name.className = 'event-name';
+            name.innerHTML = event.name;
 
-      cell.appendChild(icon);
-      cell.appendChild(eventName);
-      rowWrap.appendChild(cell);
-    }
-    content.appendChild(rowWrap);
-  }
-} else if (events.length === 3) {
-  const gridWrap = document.createElement('div');
-  gridWrap.style.display = 'grid';
-  gridWrap.style.gridTemplateColumns = '1fr 1fr';
-  gridWrap.style.gridTemplateRows = '1fr 1fr';
-  gridWrap.style.gap = '12px';
+            cell.appendChild(time);
+            cell.appendChild(icon);
+            cell.appendChild(name);
+            rowWrap.appendChild(cell);
+          }
 
-  // event[0] -> left top
-  const cell1 = document.createElement('div');
-  cell1.className = 'event-cell';
-  const time1 = document.createElement('div');
-  time1.className = 'event-time';
-  time1.textContent = events[0].time;
-  const name1 = document.createElement('div');
-  name1.className = 'event-name';
-  name1.innerHTML = events[0].name;
-  cell1.appendChild(time1);
-  const icon1 = document.createElement('img');
-  icon1.src = events[0].icon || './images/pokemon_gym.png';
-  icon1.alt = '活動圖片';
-  icon$&
-icon$&.style.height = 'auto';
-icon$&.style.aspectRatio = 'auto';
-icon$&.style.maxHeight = '150px';
-  cell1.appendChild(icon1);
-  cell1.appendChild(name1);
-  gridWrap.appendChild(cell1);
+          content.appendChild(rowWrap);
+        }
+      } else if (events.length === 3) {
+        const gridWrap = document.createElement('div');
+        gridWrap.style.display = 'grid';
+        gridWrap.style.gridTemplateColumns = '1fr 1fr';
+        gridWrap.style.gridTemplateRows = '1fr 1fr';
+        gridWrap.style.gap = '12px';
 
-  // event[2] -> right top & bottom (span 2 rows)
-  const spanCell = document.createElement('div');
-  spanCell.className = 'event-cell';
-  spanCell.style.gridRow = '1 / span 2';
-  spanCell.style.gridColumn = '2';
-  const time3 = document.createElement('div');
-  time3.className = 'event-time';
-  time3.textContent = events[2].time;
-  const name3 = document.createElement('div');
-  name3.className = 'event-name';
-  name3.innerHTML = events[2].name;
-  spanCell.appendChild(time3);
-  const icon3 = document.createElement('img');
-  icon3.src = events[2].icon || './images/pokemon_gym.png';
-  icon3.alt = '活動圖片';
-  icon3.style.width = '100%';
-  icon3.style.maxHeight = '60px';
-  icon3.style.objectFit = 'contain';
-  spanCell.appendChild(icon3);
-  spanCell.appendChild(name3);
-  gridWrap.appendChild(spanCell);
+        const cell1 = document.createElement('div');
+        cell1.className = 'event-cell';
+        const time1 = document.createElement('div');
+        time1.className = 'event-time';
+        time1.textContent = events[0].time;
+        const icon1 = createIcon(events[0].icon);
+        const name1 = document.createElement('div');
+        name1.className = 'event-name';
+        name1.innerHTML = events[0].name;
+        cell1.appendChild(time1);
+        cell1.appendChild(icon1);
+        cell1.appendChild(name1);
 
-  // event[1] -> left bottom
-  const cell2 = document.createElement('div');
-  cell2.className = 'event-cell';
-  const time2 = document.createElement('div');
-  time2.className = 'event-time';
-  time2.textContent = events[1].time;
-  const name2 = document.createElement('div');
-  name2.className = 'event-name';
-  name2.innerHTML = events[1].name;
-  cell2.appendChild(time2);
-  const icon2 = document.createElement('img');
-  icon2.src = events[1].icon || './images/pokemon_gym.png';
-  icon2.alt = '活動圖片';
-  icon2.style.width = '100%';
-  icon2.style.maxHeight = '60px';
-  icon2.style.objectFit = 'contain';
-  cell2.appendChild(icon2);
-  cell2.appendChild(name2);
-  gridWrap.appendChild(cell2);
+        const cell2 = document.createElement('div');
+        cell2.className = 'event-cell';
+        const time2 = document.createElement('div');
+        time2.className = 'event-time';
+        time2.textContent = events[1].time;
+        const icon2 = createIcon(events[1].icon);
+        const name2 = document.createElement('div');
+        name2.className = 'event-name';
+        name2.innerHTML = events[1].name;
+        cell2.appendChild(time2);
+        cell2.appendChild(icon2);
+        cell2.appendChild(name2);
 
-  content.appendChild(gridWrap);
-} else {
-  for (const event of events) {
-    const cell = document.createElement('div');
-    cell.className = 'event-cell';
+        const spanCell = document.createElement('div');
+        spanCell.className = 'event-cell';
+        spanCell.style.gridRow = '1 / span 2';
+        spanCell.style.gridColumn = '2';
+        const time3 = document.createElement('div');
+        time3.className = 'event-time';
+        time3.textContent = events[2].time;
+        const icon3 = createIcon(events[2].icon);
+        const name3 = document.createElement('div');
+        name3.className = 'event-name';
+        name3.innerHTML = events[2].name;
+        spanCell.appendChild(time3);
+        spanCell.appendChild(icon3);
+        spanCell.appendChild(name3);
 
-    const time = document.createElement('div');
-    time.className = 'event-time';
-    time.textContent = event.time;
+        gridWrap.appendChild(cell1);
+        gridWrap.appendChild(cell2);
+        gridWrap.appendChild(spanCell);
+        content.appendChild(gridWrap);
+      } else {
+        for (const event of events) {
+          const cell = document.createElement('div');
+          cell.className = 'event-cell';
 
-    const icon = document.createElement('img');
-    icon.src = event.icon || 'https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png';
-    icon.alt = '活動圖片';
-    icon.style.width = '100%';
-    icon.style.maxHeight = '100%';
-icon.style.height = 'auto';
-icon.style.aspectRatio = '1/1';
-    icon.style.objectFit = 'contain';
-    cell.appendChild(icon);
+          const time = document.createElement('div');
+          time.className = 'event-time';
+          time.textContent = event.time;
 
-    const eventName = document.createElement('div');
-    eventName.className = 'event-name';
-    eventName.innerHTML = event.name;
+          const icon = createIcon(event.icon);
+          const name = document.createElement('div');
+          name.className = 'event-name';
+          name.innerHTML = event.name;
 
-    cell.appendChild(time);
-    cell.appendChild(icon);
-    cell.appendChild(eventName);
-    content.appendChild(cell);
-  }
-}
+          cell.appendChild(time);
+          cell.appendChild(icon);
+          cell.appendChild(name);
+          content.appendChild(cell);
+        }
+      }
 
       column.appendChild(content);
       grid.appendChild(column);
@@ -325,11 +292,9 @@ icon.style.aspectRatio = '1/1';
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
 
-    const formatDate = (date) => `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-    const weekRange = `（${formatDate(monday)} - ${formatDate(sunday)}）`;
-    document.getElementById('week-range').textContent = weekRange;
-    const todayStr = `今天是 ${formatDate(today)}`;
-    document.getElementById('today-date').textContent = todayStr;
+    const formatDate = (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+    document.getElementById('week-range').textContent = `（${formatDate(monday)} - ${formatDate(sunday)}）`;
+    document.getElementById('today-date').textContent = `今天是 ${formatDate(today)}`;
 
     const weekMap = ['日', '一', '二', '三', '四', '五', '六'];
     const todayHeader = [...document.querySelectorAll('.day')].find(d => d.textContent.includes(`週${weekMap[today.getDay()]}`));
