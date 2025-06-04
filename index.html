@@ -131,27 +131,26 @@
   <script>
     const fallbackImg = 'https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png';
 
-    const schedule = {
+ const schedule = {
       "週四": [
-        { "time": "20:00", "name": "交流賽", "icon": "./images/pokemon_gym.png" }
+        { "time": "20:00", "name": "交流賽", "icon": "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/meetup/img_thumbnail.png" }
       ],
       "週五": [
         { "time": "19:00", "name": "交流賽" , "icon": "./images/koryukai_green.png" },
-        { "time": "19:30", "name": "寶可夢<br>卡牌日" }
+        { "time": "19:30", "name": "寶可夢<br>卡牌日","icon":"https://asia.pokemon-card.com/tw/archive/common/assets_c/2020/07/2e2bf4baa03a74a3255081c651dcefc8e04a8731-thumb-650x488-15014.png" }
       ],
       "週六": [
-        { "time": "14:00", "name": "U15" },
-        { "time": "15:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
+        { "time": "14:00", "name": "U15" , "icon": "./images/koryukai_green.png" },
+        { "time": "15:00", "name": "交流賽", "icon": "https://bandaicardgames-fest.com/23-24/images/logo_uatcr.jpg" },
         { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
-        { "time": "19:00", "name": "交流賽" }
+        { "time": "19:00", "name": "交流賽" , "icon": "https://i.ytimg.com/vi/r74jMgARJL4/maxresdefault.jpg" }
       ],
       "週日": [
-        { "time": "15:00", "name": "常規賽" },
-        { "time": "15:00", "name": "交流賽" },
+        { "time": "15:00", "name": "交流賽常規賽" ,"icon": "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/standardbattle/img_thumbnail.png"},
+        { "time": "15:00", "name": "交流賽" ,"icon": "https://bandaicardgames-fest.com/23-24/images/logo_dcr.jpg"},
         { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
         { "time": "19:00", "name": "道館賽", "icon": "https://asia.pokemon-card.com/tw/wp-content/uploads/sites/2/2025/02/twhk_gym_logo.png" }
       ]
-    };
 
     const grid = document.getElementById('schedule-grid');
 
