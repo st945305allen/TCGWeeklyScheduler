@@ -70,38 +70,43 @@
       grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
     }
     .event-cell {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      background: #637a99;
-      box-shadow: 0 0 6px rgba(88,166,255,0.2);
-      position: relative;
-      z-index: 1;
-      min-height: 0;
-      height: auto;
-    }
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: center;
+  padding: 0;
+  height: 100%;
+  box-shadow: 0 0 6px rgba(88,166,255,0.2);
+  background: #161b22;
+}
+
     .event-time {
-      font-size: 2em;
-      color: #c9d1d9;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    .event-name {
-      font-size: 1.4em;
-      border-radius: 8px;
-      text-align: center;
-      margin: 8px;
-      background: linear-gradient(to right, #00ffcc, #0077ff);
-      font-weight: 700;
-      width: calc(100% - 16px);
-      color: #0d0f11;
-      box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-family: 'Orbitron', sans-serif;
-    }
+  flex: 0 0 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  color: #c9d1d9;
+  font-weight: bold;
+  width: 100%;
+}
+
+.event-name {
+  flex: 0 0 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  border-radius: 0;
+  background: linear-gradient(to right, #00ffcc, #0077ff);
+  font-weight: 700;
+  width: 100%;
+  color: #0d0f11;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Orbitron', sans-serif;
+}
+
     @media screen and (max-width: 768px) {
       body {
         padding: 10px;
@@ -156,133 +161,115 @@
     const grid = document.getElementById('schedule-grid');
 
     for (const [day, events] of Object.entries(schedule)) {
-      const column = document.createElement('div');
-      column.className = 'day-column';
+  const column = document.createElement('div');
+  column.className = 'day-column';
 
-      const dayHeader = document.createElement('div');
-      dayHeader.className = 'day';
-      dayHeader.textContent = day;
-      column.appendChild(dayHeader);
+  const dayHeader = document.createElement('div');
+  dayHeader.className = 'day';
+  dayHeader.textContent = day;
+  column.appendChild(dayHeader);
 
-      const content = document.createElement('div');
-      content.className = 'day-content';
+  const content = document.createElement('div');
+  content.className = 'day-content';
 
-      const createIcon = (src) => {
-        const img = document.createElement('img');
-        img.src = src || fallbackImg;
-        img.alt = '活動圖片';
-        img.style.width = '100%';
-        img.style.height = 'auto';
-        img.style.maxHeight = '150px';
-        img.style.objectFit = 'contain';
-        img.onerror = () => img.src = fallbackImg;
-        return img;
-      };
+  const createCell = (event) => {
+    const cell = document.createElement('div');
+    cell.className = 'event-cell';
+    cell.style.display = 'flex';
+    cell.style.flexDirection = 'column';
+    cell.style.justifyContent = 'stretch';
+    cell.style.alignItems = 'center';
+    cell.style.padding = '0';
+    cell.style.height = '100%';
 
-      if (events.length === 4) {
-        for (let i = 0; i < 4; i += 2) {
-          const rowWrap = document.createElement('div');
-          rowWrap.style.display = 'flex';
-          rowWrap.style.gap = '12px';
+    // 上：時間
+    const time = document.createElement('div');
+    time.className = 'event-time';
+    time.textContent = event.time;
+    time.style.flex = '0 0 15%';
+    time.style.width = '100%';
+    time.style.display = 'flex';
+    time.style.alignItems = 'center';
+    time.style.justifyContent = 'center';
 
-          for (const event of events.slice(i, i + 2)) {
-            const cell = document.createElement('div');
-            cell.className = 'event-cell';
-            cell.style.flex = '1';
+    // 中：圖片
+    const imgWrapper = document.createElement('div');
+    imgWrapper.style.flex = '0 0 60%';
+    imgWrapper.style.width = '100%';
+    imgWrapper.style.display = 'flex';
+    imgWrapper.style.alignItems = 'center';
+    imgWrapper.style.justifyContent = 'center';
+    imgWrapper.style.overflow = 'hidden';
 
-            const time = document.createElement('div');
-            time.className = 'event-time';
-            time.textContent = event.time;
+    const icon = document.createElement('img');
+    icon.src = event.icon || fallbackImg;
+    icon.alt = '活動圖片';
+    icon.style.maxWidth = '100%';
+    icon.style.maxHeight = '100%';
+    icon.style.objectFit = 'contain';
+    icon.onerror = () => (icon.src = fallbackImg);
 
-            const icon = createIcon(event.icon);
-            const name = document.createElement('div');
-            name.className = 'event-name';
-            name.innerHTML = event.name;
+    imgWrapper.appendChild(icon);
 
-            cell.appendChild(time);
-            cell.appendChild(icon);
-            cell.appendChild(name);
-            rowWrap.appendChild(cell);
-          }
+    // 下：活動名稱
+    const name = document.createElement('div');
+    name.className = 'event-name';
+    name.innerHTML = event.name;
+    name.style.flex = '0 0 25%';
+    name.style.width = '100%';
+    name.style.display = 'flex';
+    name.style.alignItems = 'center';
+    name.style.justifyContent = 'center';
 
-          content.appendChild(rowWrap);
-        }
-      } else if (events.length === 3) {
-        const gridWrap = document.createElement('div');
-        gridWrap.style.display = 'grid';
-        gridWrap.style.gridTemplateColumns = '1fr 1fr';
-        gridWrap.style.gridTemplateRows = '1fr 1fr';
-        gridWrap.style.gap = '12px';
+    // 合併
+    cell.appendChild(time);
+    cell.appendChild(imgWrapper);
+    cell.appendChild(name);
+    return cell;
+  };
 
-        const cell1 = document.createElement('div');
-        cell1.className = 'event-cell';
-        const time1 = document.createElement('div');
-        time1.className = 'event-time';
-        time1.textContent = events[0].time;
-        const icon1 = createIcon(events[0].icon);
-        const name1 = document.createElement('div');
-        name1.className = 'event-name';
-        name1.innerHTML = events[0].name;
-        cell1.appendChild(time1);
-        cell1.appendChild(icon1);
-        cell1.appendChild(name1);
+  if (events.length === 4) {
+    for (let i = 0; i < 4; i += 2) {
+      const rowWrap = document.createElement('div');
+      rowWrap.style.display = 'flex';
+      rowWrap.style.gap = '12px';
 
-        const cell2 = document.createElement('div');
-        cell2.className = 'event-cell';
-        const time2 = document.createElement('div');
-        time2.className = 'event-time';
-        time2.textContent = events[1].time;
-        const icon2 = createIcon(events[1].icon);
-        const name2 = document.createElement('div');
-        name2.className = 'event-name';
-        name2.innerHTML = events[1].name;
-        cell2.appendChild(time2);
-        cell2.appendChild(icon2);
-        cell2.appendChild(name2);
-
-        const spanCell = document.createElement('div');
-        spanCell.className = 'event-cell';
-        spanCell.style.gridRow = '1 / span 2';
-        spanCell.style.gridColumn = '2';
-        const time3 = document.createElement('div');
-        time3.className = 'event-time';
-        time3.textContent = events[2].time;
-        const icon3 = createIcon(events[2].icon);
-        const name3 = document.createElement('div');
-        name3.className = 'event-name';
-        name3.innerHTML = events[2].name;
-        spanCell.appendChild(time3);
-        spanCell.appendChild(icon3);
-        spanCell.appendChild(name3);
-
-        gridWrap.appendChild(cell1);
-        gridWrap.appendChild(cell2);
-        gridWrap.appendChild(spanCell);
-        content.appendChild(gridWrap);
-      } else {
-        for (const event of events) {
-          const cell = document.createElement('div');
-          cell.className = 'event-cell';
-
-          const time = document.createElement('div');
-          time.className = 'event-time';
-          time.textContent = event.time;
-
-          const icon = createIcon(event.icon);
-          const name = document.createElement('div');
-          name.className = 'event-name';
-          name.innerHTML = event.name;
-
-          cell.appendChild(time);
-          cell.appendChild(icon);
-          cell.appendChild(name);
-          content.appendChild(cell);
-        }
+      for (const event of events.slice(i, i + 2)) {
+        const cell = createCell(event);
+        cell.style.flex = '1';
+        rowWrap.appendChild(cell);
       }
 
-      column.appendChild(content);
-      grid.appendChild(column);
+      content.appendChild(rowWrap);
     }
+  } else if (events.length === 3) {
+    const gridWrap = document.createElement('div');
+    gridWrap.style.display = 'grid';
+    gridWrap.style.gridTemplateColumns = '1fr 1fr';
+    gridWrap.style.gridTemplateRows = '1fr 1fr';
+    gridWrap.style.gap = '12px';
+
+    const cell1 = createCell(events[0]);
+    const cell2 = createCell(events[1]);
+    const cell3 = createCell(events[2]);
+    cell3.style.gridRow = '1 / span 2';
+    cell3.style.gridColumn = '2';
+
+    gridWrap.appendChild(cell1);
+    gridWrap.appendChild(cell2);
+    gridWrap.appendChild(cell3);
+    content.appendChild(gridWrap);
+  } else {
+    for (const event of events) {
+      const cell = createCell(event);
+      content.appendChild(cell);
+    }
+  }
+
+  column.appendChild(content);
+  grid.appendChild(column);
+}
+
 
     const today = new Date();
     const dayOfWeek = today.getDay();
