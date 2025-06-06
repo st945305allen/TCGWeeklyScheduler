@@ -1,296 +1,644 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>翻轉x點子｜本週比賽行事曆</title>
-  <style>
-    body {
-      width: 100vw;
-      height: 100vh;
-      margin: 0;
-      padding: 2vh 2vw;
-      box-sizing: border-box;
-      font-family: 'Orbitron', 'Segoe UI', 'Noto Sans TC', sans-serif;
-      background-color: #0d0f11;
-      background-image: 
-        linear-gradient(90deg, rgba(0,255,0,0.05) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(0,255,0,0.05) 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      overflow: hidden;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #58a6ff;
-      font-size: 2em;
-      text-shadow: 0 0 8px #1f6feb;
-    }
-    #week-range, #today-date {
-      text-align: center;
-      font-size: 1.4em;
-      margin: 0;
-      color: #8b949e;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-      gap: 20px;
-      height: 100%;
-    }
-    .day {
-      background: linear-gradient(135deg, #ffdd57, #ffaa00);
-      color: #0d0f11;
-      text-align: center;
-      font-weight: bold;
-      padding: 16px 12px;
-      font-size: 1.4em;
-      box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
-      letter-spacing: 1px;
-      font-family: 'Orbitron', sans-serif;
-    }
-    .day-column {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      gap: 12px;
-    }
-    .day-content {
-       display: grid; 
-      gap: 12px;
-      flex: 1;
-      min-height: 0;
-      grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
-    }
-    .event-cell {
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-  align-items: center;
-  padding: 0;
-  height: 100%;
-  box-shadow: 0 0 6px rgba(88,166,255,0.2);
-  background: #161b22;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>每週活動行事曆</title>
+<style>
+/* General Styles */
+* {
+box-sizing: border-box;
 }
 
-    .event-time {
-  flex: 0 0 15%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2em;
-  color: #c9d1d9;
-  font-weight: bold;
-  width: 100%;
+body {
+background: #f8fafc;
+color: #1a202c;
+font-family: 'Segoe UI', sans-serif;
+font-size: clamp(16px, 1.8vw, 20px);
+margin: 0;
+padding: 1rem;
+}
+
+/* Header Styles */
+h1 {
+font-size: clamp(24px, 3vw, 34px);
+margin-bottom: 0.25rem;
+text-align: center;
+}
+
+#week-range,
+#today-date {
+color: #4a5568;
+margin: 0;
+text-align: center;
+}
+
+/* Filter Styles */
+.filter-container {
+margin-top: 1rem;
+text-align: center;
+}
+
+#gameFilter {
+padding: 0.5rem 1rem;
+border-radius: 8px;
+border: 1px solid #cbd5e0;
+background-color: #ffffff;
+font-size: clamp(1rem, 1.5vw, 1.1rem);
+color: #2d3748;
+cursor: pointer;
+transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#gameFilter:focus {
+outline: none;
+border-color: #4299e1;
+box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+}
+
+/* Weekly Calendar Styles */
+.calendar {
+display: grid;
+gap: 1rem;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+margin-top: 1rem;
+}
+
+.day-column {
+background: #ffffff;
+border-radius: 12px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+padding: 1rem;
+transition: all 0.3s ease;
+}
+
+.day-title {
+border-bottom: 2px solid #cbd5e0;
+font-size: 1.2rem;
+font-weight: bold;
+margin-bottom: 0.75rem;
+padding-bottom: 0.25rem;
+}
+
+.event {
+align-items: flex-start;
+display: flex;
+gap: 0.5rem;
+margin-bottom: 0.75rem;
+}
+
+.event img {
+background: #edf2f7;
+border-radius: 6px;
+flex-shrink: 0;
+height: 64px;
+object-fit: contain;
+width: 64px;
+}
+
+.event-body {
+align-items: center;
+display: flex;
+flex-grow: 1;
+gap: 0.5rem;
+justify-content: space-between;
+}
+
+.event-details {
+display: flex;
+flex-direction: column;
+flex-grow: 1;
+font-size: 0.9rem;
+}
+
+.event-time {
+color: #2b6cb0;
+font-size: clamp(16px, 1.5vw, 18px);
+font-weight: bold;
+}
+
+.event-game {
+color: #718096;
+font-size: clamp(15px, 1.4vw, 17px);
 }
 
 .event-name {
-  flex: 0 0 25%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4em;
-  border-radius: 0;
-  background: linear-gradient(to right, #00ffcc, #0077ff);
-  font-weight: 700;
-  width: 100%;
-  color: #0d0f11;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-family: 'Orbitron', sans-serif;
+color: inherit;
+font-size: clamp(16px, 1.5vw, 18px);
+overflow: hidden;
+text-overflow: ellipsis;
+text-decoration: none;
+white-space: nowrap;
 }
 
-    @media screen and (max-width: 768px) {
-      body {
-        padding: 10px;
-        overflow-y: auto;
-      }
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      .day-column {
-        margin-bottom: 16px;
-      }
-      .event-time {
-        font-size: 1.6em;
-      }
-      .event-name {
-        font-size: 1.2em;
-      }
-    }
-  </style>
+.event-action {
+flex-shrink: 0;
+}
+
+.signup-btn {
+background-color: #4299e1;
+border-radius: 4px;
+color: #fff;
+display: inline-block;
+font-size: clamp(14px, 1.2vw, 18px);
+padding: 4px 10px;
+text-decoration: none;
+transition: background-color 0.2s ease;
+}
+
+.signup-btn:hover {
+background-color: #2b6cb0;
+}
+
+/* --- 手機微調 (Mobile Adjustments) --- */
+@media (max-width: 600px) {
+.event-game,
+.event-name,
+.event-time {
+font-size: 13px;
+}
+
+.signup-btn {
+font-size: 0.75rem;
+padding: 4px 8px;
+}
+}
+
+/* --- 桌機加強 (Desktop Enhancements) --- */
+@media (min-width: 1025px) {
+.event-name {
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 2;
+display: -webkit-box;
+overflow: hidden;
+white-space: normal;
+}
+}
+
+/* --- Monthly Calendar Styles --- */
+#monthly-calendar-section {
+margin-top: 3rem;
+text-align: center;
+}
+
+.calendar-nav {
+align-items: center;
+display: flex;
+gap: 1rem;
+justify-content: center;
+margin-bottom: 1rem;
+}
+
+#monthly-calendar {
+border-collapse: collapse;
+margin: 0 auto;
+max-width: 1000px;
+width: 100%;
+}
+
+#monthly-calendar th,
+#monthly-calendar td {
+border: 1px solid #cbd5e0;
+font-size: 0.85rem;
+height: 100px;
+padding: 0;
+position: relative;
+vertical-align: top;
+width: 14.28%;
+}
+
+.calendar-weekdays {
+background-color: #f0f4f8;
+}
+
+.calendar-weekdays th {
+height: 50px;
+}
+
+.weekday-label {
+align-items: center;
+display: flex;
+font-size: 1.1rem;
+font-weight: bold;
+height: 100%; /* Adjusted from 100% for consistency */
+justify-content: center;
+}
+
+#monthly-calendar td .date-number {
+color: #4a5568;
+font-weight: bold;
+position: absolute;
+right: 6px;
+top: 4px;
+}
+
+#monthly-calendar td .event-entry {
+align-items: center;
+display: flex;
+font-size: 0.75rem;
+gap: 4px;
+line-height: 1.3em;
+margin-top: 1.2em;
+text-align: left;
+}
+
+#monthly-calendar td .event-entry img {
+height: 48px;
+object-fit: contain;
+width: 48px;
+margin: 0 5px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+  background-color: #fff;
+}
+
+.inactive-month {
+background-color: #edf2f7;
+color: #a0aec0;
+}
+
+.today {
+background-color: #ebf8ff;
+border: 2px solid #3182ce;
+box-shadow: inset 0 0 0 1px #3182ce;
+}
+
+.weekend {
+background-color: #fff5f5;
+}
+.game-icon-btn {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+  background-color: #fff;
+}
+
+.game-icon-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.game-icon-btn.active {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 2px #90cdf4;
+}
+
+</style>
 </head>
 <body>
-  <h1>翻轉x點子｜本週比賽行事曆</h1>
-  <p id="week-range"></p>
-  <p id="today-date"></p>
-  <div class="grid" id="schedule-grid" style="width: 100%; height: 100%; display: grid; align-content: stretch;"></div>
-  <script>
-    const fallbackImg = 'https://tw.portal-pokemon.com/assets_c/2020/06/0e4da444baad1389fa5c1f205082462eb2d2a243-thumb-650x488-14617.png';
+<h1>翻轉x點子｜本週比賽行事曆</h1>
+<p id="week-range"></p>
+<p id="today-date"></p>
 
- const schedule = {
-      "週四": [
-        { "time": "20:00", "name": "交流賽", "icon": "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/meetup/img_thumbnail.png" }
-      ],
-      "週五": [
-        { "time": "19:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
-        { "time": "19:30", "name": "寶可夢<br>卡牌日", "icon": "https://asia.pokemon-card.com/hk/archive/common/assets_c/2020/10/CH-TCG_logo-thumb-650xauto-15381.png" }
-      ],
-      "週六": [
-        { "time": "14:00", "name": "U15", "icon": "./images/koryukai_green.png" },
-        { "time": "15:00", "name": "交流賽", "icon": "https://play-lh.googleusercontent.com/474Luutg7UpwCrLL1s8vngxPCUPxfGu1F7jHzJ1-a49B-tMgEo8zPYv7VUwzKHZeCA" },
-        { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
-        { "time": "19:00", "name": "交流賽", "icon": "https://i.ytimg.com/vi/r74jMgARJL4/maxresdefault.jpg" }
-      ],
-      "週日": [
-        { "time": "15:00", "name": "常規賽", "icon": "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/standardbattle/img_thumbnail.png" },
-        { "time": "15:00", "name": "交流賽", "icon": "https://world.digimoncard.com/images/news/001/thumb.png" },
-        { "time": "18:00", "name": "交流賽", "icon": "./images/koryukai_green.png" },
-        { "time": "19:00", "name": "道館賽", "icon": "https://asia.pokemon-card.com/tw/wp-content/uploads/sites/2/2025/02/twhk_gym_logo.png" }
-      ]
-    };
+<div class="filter-container">
+<img src="https://asia-en.onepiece-cardgame.com/images/common/logo_op.png"
+ alt="One Piece" title="One Piece"
+   class="game-icon-btn"
+  onclick="setGameFilter('OPCG')">
+<img src="https://asia.pokemon-card.com/tw/archive/common/assets_c/2020/07/2e2bf4baa03a74a3255081c651dcefc8e04a8731-thumb-650x488-15014.png"
+ alt="Pokémon" title="Pokémon" 
+ class="game-icon-btn" 
+ onclick="setGameFilter('PTCG')">
+<img src="https://bandaicardgames-fest.com/23-24/images/logo_dcr.jpg" 
+alt="Digimon" title="Digimon" 
+ class="game-icon-btn"
+ onclick="setGameFilter('DTCG')">
+<img src="https://bandaicardgames-fest.com/23-24/images/logo_uatcr.jpg"
+ alt="UA" title="UA" 
+ class="game-icon-btn"
+ onclick="setGameFilter('UA')">
+<img src="https://beyblade.takaratomy.co.jp/beyblade-x/event/_image/beyx_logo/thum/koryukai_green.png" 
+alt="BX" title="BX" 
+ class="game-icon-btn"
+onclick="setGameFilter('BX')">
+<img src="https://magicomens.com/cdn/shop/collections/Grand_460x_2x_8f38bf4c-a03b-44ef-b66e-a0ce249691f4.webp?v=1704809375" 
+alt="GA" title="GA" 
+ class="game-icon-btn"
+onclick="setGameFilter('GA')">
+<!-- <img src="https://cdn-icons-png.freepik.com/256/6726/6726840.png?ga=GA1.1.2111458820.1749204480"
+ alt="全部" title="全部"
+ class="game-icon-btn"
+  onclick="setGameFilter('ALL')"> -->
+</div>
 
-    const grid = document.getElementById('schedule-grid');
+<div class="calendar" id="calendar"></div>
 
-    for (const [day, events] of Object.entries(schedule)) {
-  const column = document.createElement('div');
-  column.className = 'day-column';
+<div id="monthly-calendar-section">
+<div class="calendar-nav">
+<button id="prev-month">&#x25C0; 上個月</button>
+<span id="current-month-label"></span>
+<button id="next-month">下個月 &#x25B6;</button>
+</div>
+<table id="monthly-calendar">
+<thead>
+<tr class="calendar-weekdays">
+<th><div class="weekday-label">日</div></th>
+<th><div class="weekday-label">一</div></th>
+<th><div class="weekday-label">二</div></th>
+<th><div class="weekday-label">三</div></th>
+<th><div class="weekday-label">四</div></th>
+<th><div class="weekday-label">五</div></th>
+<th><div class="weekday-label">六</div></th>
+</tr>
+</thead>
+<tbody id="calendar-body">
+</tbody>
+</table>
+</div>
 
-  const dayHeader = document.createElement('div');
-  dayHeader.className = 'day';
-  dayHeader.textContent = day;
-  column.appendChild(dayHeader);
+<script>
+//https://cdn-icons-png.freepik.com/256/6266/6266794.png?semt=ais_hybrid
+// --- Configuration Data ---
+const gameMap = {
+"OPCG": "ONE PIECE卡牌對戰",
+"PTCG": "寶可夢集換式卡牌遊戲",
+"DTCG": "數碼寶貝卡牌遊戲",
+"GA": "Grand Archive TCG",
+"UA": "Union Arena TCG",
+"BD": "桌遊",
+"BX": "戰鬥陀螺",
+};
 
-  const content = document.createElement('div');
-  content.className = 'day-content';
+const gameIcons = {
+"OPCG": "https://asia-en.onepiece-cardgame.com/images/common/logo_op.png",
+"PTCG": "https://asia.pokemon-card.com/tw/archive/common/assets_c/2020/07/2e2bf4baa03a74a3255081c651dcefc8e04a8731-thumb-650x488-15014.png",
+"DTCG": "https://bandaicardgames-fest.com/23-24/images/logo_dcr.jpg",
+"GA": "https://magicomens.com/cdn/shop/collections/Grand_460x_2x_8f38bf4c-a03b-44ef-b66e-a0ce249691f4.webp?v=1704809375",
+"UA": "https://bandaicardgames-fest.com/23-24/images/logo_uatcr.jpg",
+"BD": "桌遊",
+"BX": "https://beyblade.takaratomy.co.jp/beyblade-x/event/_image/beyx_logo/thum/koryukai_green.png"
+};
 
-  const createCell = (event) => {
-    const cell = document.createElement('div');
-    cell.className = 'event-cell';
-    cell.style.display = 'flex';
-    cell.style.flexDirection = 'column';
-    cell.style.justifyContent = 'stretch';
-    cell.style.alignItems = 'center';
-    cell.style.padding = '0';
-    cell.style.height = '100%';
+const schedule = {
+"週四": [{ time: "20:00", name: "交流賽", game: "OPCG", icon: "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/meetup/img_thumbnail.png" }],
+"週五": [
+{ time: "19:00", name: "交流賽", game: "BX", icon: "https://beyblade.takaratomy.co.jp/beyblade-x/event/_image/beyx_logo/thum/koryukai_green.png" },
+{ time: "19:30", name: "寶可夢卡牌日", game: "PTCG", icon: "https://asia.pokemon-card.com/tw/archive/common/assets_c/2020/07/2e2bf4baa03a74a3255081c651dcefc8e04a8731-thumb-650x488-15014.png" }
+],
+"週六": [
+{ time: "14:00", name: "U15", game: "PTCG", icon: "./images/U15.png" },
+{ time: "15:00", name: "交流賽", game: "UA", icon: "https://bandaicardgames-fest.com/23-24/images/logo_uatcr.jpg" },
+{ time: "18:00", name: "交流賽", game: "BX", icon: "https://beyblade.takaratomy.co.jp/beyblade-x/event/_image/beyx_logo/thum/koryukai_green.png" },
+{ time: "19:00", name: "交流賽", game: "GA", icon: "https://magicomens.com/cdn/shop/collections/Grand_460x_2x_8f38bf4c-a03b-44ef-b66e-a0ce249691f4.webp?v=1704809375" }
+],
+"週日": [
+{ time: "15:00", name: "常規賽", game: "OPCG", icon: "https://asia-tw.onepiece-cardgame.com/images/events/officialevents/standardbattle/img_thumbnail.png" },
+{ time: "15:00", name: "交流賽", game: "DTCG", icon: "https://bandaicardgames-fest.com/23-24/images/logo_dcr.jpg" },
+{ time: "18:00", name: "交流賽", game: "BX", icon: "https://beyblade.takaratomy.co.jp/beyblade-x/event/_image/beyx_logo/thum/koryukai_green.png" },
+{ time: "19:00", name: "道館賽", game: "PTCG", icon: "https://asia.pokemon-card.com/tw/wp-content/uploads/sites/2/2025/02/twhk_gym_logo.png",
+link: "https://forms.gle/example" }
+]
+};
 
-    // 上：時間
-    const time = document.createElement('div');
-    time.className = 'event-time';
-    time.textContent = event.time;
-    time.style.flex = '0 0 15%';
-    time.style.width = '100%';
-    time.style.display = 'flex';
-    time.style.alignItems = 'center';
-    time.style.justifyContent = 'center';
+const holidays = [
+"2025-09-29", // 教師節
+"2025-10-06", // 中秋節
+"2025-10-10", // 國慶日
+"2025-10-24", // 台灣光復節
+"2025-12-25"  // 行憲紀念日
+];
 
-    // 中：圖片
-    const imgWrapper = document.createElement('div');
-    imgWrapper.style.flex = '0 0 60%';
-    imgWrapper.style.width = '100%';
-    imgWrapper.style.display = 'flex';
-    imgWrapper.style.alignItems = 'center';
-    imgWrapper.style.justifyContent = 'center';
-    imgWrapper.style.overflow = 'hidden';
+const overrides = {
+// "2025-06-08": [
+// { time: "19:00", name: "奪盒賽", game: "OPCG", icon: "https://i.ytimg.com/vi/r74jMgARJL4/maxresdefault.jpg", link: "https://forms.gle/boxwar" }
+// ],
+// "2025-06-14": [
+// { time: "15:00", name: "挑戰賽", game: "OPCG", link: "https://forms.gle/challenge" }
+// ]
+};
 
-    const icon = document.createElement('img');
-    icon.src = event.icon || fallbackImg;
-    icon.alt = '活動圖片';
-    icon.style.maxWidth = '100%';
-    icon.style.maxHeight = '100%';
-    icon.style.objectFit = 'contain';
-    icon.onerror = () => (icon.src = fallbackImg);
+const fallbackIcon = 'https://via.placeholder.com/48x48?text=Icon';
+const calendar = document.getElementById('calendar');
+let selectedGameFilter = 'ALL';
 
-    imgWrapper.appendChild(icon);
 
-    // 下：活動名稱
-    const name = document.createElement('div');
-    name.className = 'event-name';
-    name.innerHTML = event.name;
-    name.style.flex = '0 0 25%';
-    name.style.width = '100%';
-    name.style.display = 'flex';
-    name.style.alignItems = 'center';
-    name.style.justifyContent = 'center';
+let currentMonth = new Date();
+currentMonth.setDate(1); // Set to the first day of the current month
 
-    // 合併
-    cell.appendChild(time);
-    cell.appendChild(imgWrapper);
-    cell.appendChild(name);
-    return cell;
-  };
+// --- Helper Functions ---
 
-  if (events.length === 4) {
-    for (let i = 0; i < 4; i += 2) {
-      const rowWrap = document.createElement('div');
-      rowWrap.style.display = 'flex';
-      rowWrap.style.gap = '12px';
+/**
+* Formats a Date object into YYYY/MM/DD string.
+* @param {Date} d - The date object.
+* @returns {string} Formatted date string.
+*/
+const formatDate = (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
 
-      for (const event of events.slice(i, i + 2)) {
-        const cell = createCell(event);
-        cell.style.flex = '1';
-        rowWrap.appendChild(cell);
-      }
+/**
+* Merges the base schedule with date-specific overrides.
+* @param {Object} baseSchedule - The default weekly schedule.
+* @param {Object} dateOverrides - Events that override the base schedule for specific dates.
+* @param {Date} mondayOfWeek - The Monday of the current week.
+* @returns {Object} The merged schedule for the week.
+*/
+function mergeScheduleWithOverrides(baseSchedule, dateOverrides, mondayOfWeek) {
+const result = {};
+for (let i = 0; i < 7; i++) {
+const currentDate = new Date(mondayOfWeek);
+currentDate.setDate(mondayOfWeek.getDate() + i);
+const dateStr = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+const weekDayName = weekMap[currentDate.getDay()];
 
-      content.appendChild(rowWrap);
-    }
-  } else if (events.length === 3) {
-    const gridWrap = document.createElement('div');
-    gridWrap.style.display = 'grid';
-    gridWrap.style.gridTemplateColumns = '1fr 1fr';
-    gridWrap.style.gridTemplateRows = '1fr 1fr';
-    gridWrap.style.gap = '12px';
+const baseEvents = baseSchedule[weekDayName] || [];
+const overrideEvents = dateOverrides[dateStr] || [];
 
-    const cell1 = createCell(events[0]);
-    const cell2 = createCell(events[1]);
-    const cell3 = createCell(events[2]);
-    cell3.style.gridRow = '1 / span 2';
-    cell3.style.gridColumn = '2';
-
-    gridWrap.appendChild(cell1);
-    gridWrap.appendChild(cell2);
-    gridWrap.appendChild(cell3);
-    content.appendChild(gridWrap);
-  } else {
-    for (const event of events) {
-      const cell = createCell(event);
-      content.appendChild(cell);
-    }
-  }
-
-  column.appendChild(content);
-  grid.appendChild(column);
+// Create a set of keys for override events to filter out duplicates from base
+const overrideKeys = new Set(overrideEvents.map(e => `${e.time}_${e.game}`));
+const merged = [
+...baseEvents.filter(e => !overrideKeys.has(`${e.time}_${e.game}`)),
+...overrideEvents
+];
+result[weekDayName] = merged;
+}
+return result;
 }
 
+/**
+* Retrieves events for a specific date, prioritizing overrides.
+* @param {Date} dateObj - The date object.
+* @returns {Array} An array of event objects for the given date.
+*/
+function getEventsForDate(dateObj) {
+const pad = (n) => String(n).padStart(2, '0');
+const dateStr = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`;
+if (overrides[dateStr]) {
+return overrides[dateStr];
+}
+const weekday = weekMap[dateObj.getDay()];
+return schedule[weekday] || [];
+}
 
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
+// --- Weekly Calendar Rendering ---
 
-    const formatDate = (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
-    document.getElementById('week-range').textContent = `（${formatDate(monday)} - ${formatDate(sunday)}）`;
-    document.getElementById('today-date').textContent = `今天是 ${formatDate(today)}`;
+// Display current week range and today
+const today = new Date();
+const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to get Monday
+const monday = new Date(today);
+monday.setDate(today.getDate() + mondayOffset);
+const sunday = new Date(monday);
+sunday.setDate(monday.getDate() + 6);
 
-    const weekMap = ['日', '一', '二', '三', '四', '五', '六'];
-    const todayHeader = [...document.querySelectorAll('.day')].find(d => d.textContent.includes(`週${weekMap[today.getDay()]}`));
-    if (todayHeader) {
-      todayHeader.style.background = 'linear-gradient(135deg, #ff3cac, #784ba0)';
-      todayHeader.style.color = '#ffffff';
-      todayHeader.style.boxShadow = '0 0 20px rgba(255, 0, 128, 0.6)';
-    }
-  </script>
+document.getElementById('week-range').textContent = `（${formatDate(monday)} - ${formatDate(sunday)}）`;
+document.getElementById('today-date').textContent = `今天是 ${formatDate(today)}`;
+
+const weekMap = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+/**
+* Renders the weekly events based on the selected game filter.
+*/
+function renderWeeklyCalendar() {
+calendar.innerHTML = ''; // Clear existing events
+const selectedGame = selectedGameFilter;
+
+// Use the merge function to get the combined schedule for the current week
+const mergedSchedule = mergeScheduleWithOverrides(schedule, overrides, monday);
+
+for (const [day, events] of Object.entries(mergedSchedule)) {
+// Filter events based on selected game
+const filteredEvents = events.filter(event =>
+selectedGame === "ALL" || event.game === selectedGame
+);
+
+if (filteredEvents.length === 0) continue;
+
+const column = document.createElement('div');
+column.className = 'day-column';
+column.innerHTML = `<div class="day-title day">${day}</div>`;
+
+for (const event of filteredEvents) {
+const eventElem = document.createElement('div');
+eventElem.className = 'event';
+
+// Determine the icon source, prioritizing event.icon then gameIcons map
+const iconSrc = event.icon || (event.game && gameIcons[event.game]) || fallbackIcon;
+
+eventElem.innerHTML = `
+<img src="${iconSrc}" alt="icon" onerror="this.onerror=null;this.src='${fallbackIcon}'" />
+<div class="event-body">
+<div class="event-details">
+<span class="event-time">${event.time}</span>
+${event.game ? `<span class="event-game">${gameMap[event.game] || event.game}</span>` : ''}
+<span class="event-name">${event.name}</span>
+</div>
+${event.link ? `
+<div class="event-action">
+<a class="signup-btn" href="${event.link}" target="_blank">報名</a>
+</div>` : ''
+}
+</div>
+`;
+column.appendChild(eventElem);
+}
+calendar.appendChild(column);
+}
+
+// Highlight today's column in the weekly view
+const todayHeader = [...document.querySelectorAll('.day')].find(d => d.textContent.includes(`週${weekMap[today.getDay()]}`));
+if (todayHeader) {
+todayHeader.parentElement.style.background = 'linear-gradient(135deg, #d6bcfa, #b794f4)';
+todayHeader.parentElement.style.color = '#ffffff';
+todayHeader.parentElement.style.boxShadow = '0 0 10px rgba(183, 148, 244, 0.4)';
+}
+}
+
+// --- Monthly Calendar Rendering ---
+
+/**
+* Renders the monthly calendar grid, applying the selected game filter.
+*/
+function renderMonthlyCalendar() {
+const year = currentMonth.getFullYear();
+const month = currentMonth.getMonth();
+const firstDayOfMonth = new Date(year, month, 1);
+const firstWeekDay = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
+const todayISOString = new Date().toISOString().split('T')[0];
+
+const tbody = document.getElementById("calendar-body");
+document.getElementById("current-month-label").textContent = `${year} / ${month + 1}`;
+tbody.innerHTML = "";
+
+const selectedGame = selectedGameFilter;
+
+let dayCounter = 1 - firstWeekDay; // Start with the day number for the first cell
+for (let row = 0; row < 6; row++) {
+const rowHtml = [];
+let hasActiveMonthDay = false; // Flag to check if row has any day from current month
+
+for (let col = 0; col < 7; col++, dayCounter++) {
+const cellDate = new Date(firstDayOfMonth);
+// Calculate the date for the current cell
+cellDate.setDate(firstDayOfMonth.getDate() + (row * 7 + col - firstWeekDay));
+
+const pad = (n) => String(n).padStart(2, '0');
+const dateStr = `${cellDate.getFullYear()}-${pad(cellDate.getMonth() + 1)}-${pad(cellDate.getDate())}`;
+const inCurrentMonth = cellDate.getMonth() === month;
+if (inCurrentMonth) {
+hasActiveMonthDay = true;
+}
+
+let tdClass = inCurrentMonth ? '' : 'inactive-month';
+if ([0, 6].includes(cellDate.getDay()) || holidays.includes(dateStr)) {
+tdClass += ' weekend';
+}
+if (dateStr === todayISOString && inCurrentMonth) {
+tdClass += ' today';
+}
+
+let cellHtml = `<td class="${tdClass.trim()}">`;
+cellHtml += `<div class="date-number">${cellDate.getDate()}</div>`;
+
+const events = getEventsForDate(cellDate).filter(evt => selectedGame === "ALL" || evt.game === selectedGame);
+for (const evt of events) {
+const icon = evt.icon ? `<img src="${evt.icon}" alt="icon">` : '';
+cellHtml += `<div class="event-entry">${icon}${evt.time} ${evt.name}</div>`;
+}
+cellHtml += `</td>`;
+rowHtml.push(cellHtml);
+}
+
+// Only add the row if it contains at least one day from the current month
+if (hasActiveMonthDay) {
+tbody.innerHTML += `<tr>${rowHtml.join('')}</tr>`;
+}
+}
+}
+
+// --- Filter Icon Handler ---
+function setGameFilter(game) {
+
+selectedGameFilter = game;
+renderWeeklyCalendar();
+renderMonthlyCalendar();
+
+// 標記選中的圖示
+  document.querySelectorAll('.game-icon-btn').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick').includes(`'${game}'`));
+  });
+
+}
+
+// --- Event Listeners ---
+document.getElementById("prev-month").addEventListener("click", () => {
+currentMonth.setMonth(currentMonth.getMonth() - 1);
+renderMonthlyCalendar();
+});
+
+document.getElementById("next-month").addEventListener("click", () => {
+currentMonth.setMonth(currentMonth.getMonth() + 1);
+renderMonthlyCalendar();
+});
+
+// Initial rendering
+renderWeeklyCalendar();
+renderMonthlyCalendar();
+</script>
 </body>
 </html>
-
